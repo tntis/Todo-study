@@ -61,13 +61,55 @@ public class TodoJapEmRepository implements TodoRepository{
 
     }
 
+    // TDD(Test-Driven Development) -> 텍스트 주도 개발
+   // -> 실제 메인 코드보다 테스트 코드를 먼저 만드는 개발방법론
+
     @Override
     public void delete(Todo todo) {
-
+        Optional<Todo> result = findById(todo.getId());
+        if(result.isPresent()){
+            em.remove(todo);
+        }
     }
 
     @Override
     public void deleteById(Integer id) {
-
+        Optional<Todo> result = findById(id);
+        if(result.isPresent()){
+            Todo todo = result.get();
+            delete(todo);
+        }
     }
+    public void delete1(Todo todo) {
+        deleteById1(todo.getId());
+    }
+
+    public void deleteById1(Integer id) {
+        Optional<Todo> result = findById(id);
+        if(result.isPresent()){
+            Todo todo = result.get();
+            em.remove(todo);
+        }
+    }
+
+    public void delete2(Todo todo) {
+        deleteById1(todo.getId());
+    }
+
+    public void deleteById2(Integer id) { // Java 에서는 Method Signature (매소드 시그니쳐)
+       // Worst
+        /*
+        Optional<Todo> result = findById(id);
+        if(result.isPresent()){
+            Todo todo = result.get();
+            em.remove(todo);
+        }
+        */
+        // Not bad
+        //findById(id).ifPresent(entity -> em.remove(entity));
+
+        // Best ( Method Reference)
+        findById(id).ifPresent(em::remove); //  t -> em.remove(t)  null 일수 없다.
+    }
+
 }

@@ -1,9 +1,6 @@
 package jocture.todo.entity;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +21,7 @@ import javax.persistence.Table;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class Todo {
 
     @Id @GeneratedValue
@@ -34,6 +32,5 @@ public class Todo {
     private String title;
 
     private boolean done;
-
 
 }
