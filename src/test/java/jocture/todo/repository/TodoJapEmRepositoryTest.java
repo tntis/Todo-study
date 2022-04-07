@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,16 +32,15 @@ class TodoJapEmRepositoryTest {
     @Test
     void findAll() {
         //given
-        Todo todo1 = Todo.builder().userId(USER_NAME).title("밥먹기").done(false).build();
-        Todo todo2 = Todo.builder().userId(USER_NAME).title("청소하기").done(false).build();
-        repository.save(todo1);
-        repository.save(todo2);
-
+        Todo todo1 = saveTodo("밥먹기");
+        Todo todo2 = saveTodo("청소하기");
         //when
         List<Todo> all = repository.findAll();
 
         //then
-        Assertions.assertThat(todo1);
+        Assertions.assertThat(all).hasSize(2);
+        Assertions.assertThat(all).filteredOn(m -> Objects.equals(m, todo1)).isSameAs(todo1);
+
     }
 
     private Todo saveTodo(String title) {
@@ -55,23 +56,41 @@ class TodoJapEmRepositoryTest {
     @Test
     void findById() {
         //given
+        Todo todo1 = saveTodo("밥먹기");
+        Todo todo2 = saveTodo("청소하기");
         //when
+       Optional<Todo> result = repository.findById(todo1.getId());
+
         //then
+        Assertions.assertThat(result).isPresent();
+        Assertions.assertThat(result.get().getId()).isEqualTo(todo1.getId());
     }
 
 
     @Test
     void findById_NoResult() {
         //given
+        Integer id = -999;
+
         //when
+        Optional<Todo> result = repository.findById(id);
+
         //then
+        Assertions.assertThat(result).isEmpty();
     }
 
     @Test
     void findByUserId() {
         //given
+        Todo todo1 = saveTodo("배고파");
+
         //when
+        List<Todo> result = repository.findByUserId(todo1.getUserId());
+
         //then
+        Assertions.assertThat(result).hasSize(1);
+
+
     }
 
     @Test
@@ -83,17 +102,42 @@ class TodoJapEmRepositoryTest {
         Todo todo2 = Todo.builder().userId(USER_NAME).title("자바 공부하기2").done(false).build();
 
         // When
-        log.info("11111");
         repository.save(todo1);
-        log.info("222");
         repository.save(todo2);
       //  em.flush();
 
         // Then
+        Assertions.assertThat(repository.findById(todo1.getId())).isPresent();
+
 
     }
 
+    @Test
+    void delete(){
+        // Given
+        Todo todo1 = saveTodo("배고파");
 
+        // When
+        repository.delete(todo1);
+
+        // Then
+        Optional<Todo> result = repository.findById(todo1.getId());
+        Assertions.assertThat(result).isEmpty();
+    }
+
+
+    @Test
+    void deleteById(){
+        // Given
+        Todo todo1 = saveTodo("배고파");
+
+        // When
+        repository.deleteById(todo1.getId());
+
+        // Then
+        Optional<Todo> result = repository.findById(todo1.getId());
+        Assertions.assertThat(result).isEmpty();
+    }
 
 
 }
