@@ -22,6 +22,7 @@ import javax.persistence.Table;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter @Setter
+@ToString
 public class Todo {
 
     @Id @GeneratedValue

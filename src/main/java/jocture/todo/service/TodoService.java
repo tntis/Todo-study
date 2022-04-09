@@ -53,7 +53,7 @@ public class TodoService {
         oldTodo.ifPresentOrElse(todo -> {
             todo.setTitle(newTodo.getTitle());
             todo.setDone(newTodo.isDone());
-            repository.save(todo);
+           // repository.save(todo); // 없어도 무관하게 동작함
             log.info("Todo가 수정되었습니다.{}", todo.getId());
         }, () -> log.warn("수정할 Todo가 없습니다.{}", newTodo.getId()));
     }
