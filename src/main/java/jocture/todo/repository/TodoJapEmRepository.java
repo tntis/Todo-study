@@ -66,19 +66,12 @@ public class TodoJapEmRepository implements TodoRepository{
 
     @Override
     public void delete(Todo todo) {
-        Optional<Todo> result = findById(todo.getId());
-        if(result.isPresent()){
-            em.remove(todo);
-        }
+        deleteById(todo.getId());
     }
 
     @Override
     public void deleteById(Integer id) {
-        Optional<Todo> result = findById(id);
-        if(result.isPresent()){
-            Todo todo = result.get();
-            delete(todo);
-        }
+        findById(id).ifPresent(em::remove);
     }
     public void delete1(Todo todo) {
         deleteById1(todo.getId());
