@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import java.time.LocalDateTime;
 /*
     JPA
     -> java의 표준 ORM
@@ -15,23 +15,28 @@ import javax.persistence.Table;
 
    스프링 데이터 JPA : 스프링 진영에서 지원하는 라이브러리
  */
- 
+
 @Entity
 // @Table(name = "tbl_todo")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 public class Todo {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Integer id;
 
     private String userId;
 
     private String title;
+    // @Temporal
+    private LocalDateTime createdAt;
 
     private boolean done;
 
 }
+//@JsonIgnore
