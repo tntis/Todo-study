@@ -1,16 +1,18 @@
 package jocture.todo.dto;
 
 import jocture.todo.entity.Todo;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Builder
+@Builder // 다른생성자가 없으면, 전체 파라미터
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class TodoDto {
 
     private Integer id;

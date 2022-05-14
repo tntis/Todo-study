@@ -1,5 +1,6 @@
 package jocture.todo.entity;
 
+import jocture.todo.dto.TodoDto;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Todo {
 
+    private static final String TEMP_USER_ID = "temp";
     @Id
     @GeneratedValue
     private Integer id;
@@ -37,6 +39,15 @@ public class Todo {
     private LocalDateTime createdAt;
 
     private boolean done;
+
+    public static Todo from(TodoDto dto) {
+        return Todo.builder()
+                .id(dto.getId())
+                .userId(TEMP_USER_ID)
+                .title(dto.getTitle())
+                .done(dto.isDone())
+                .build();
+    }
 
 }
 //@JsonIgnore

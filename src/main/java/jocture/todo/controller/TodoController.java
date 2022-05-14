@@ -5,6 +5,7 @@ import jocture.todo.entity.Todo;
 import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 //@Controller + @ResponseBody
 @RestController
 @RequiredArgsConstructor
+//@CrossOrigin(origins = {"http://localhost:3000"}, maxAge = 3600, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}) // Wedmvcconfig
 public class TodoController {
 
     private static final String TEMP_USER_ID = "temp";
@@ -25,6 +27,7 @@ public class TodoController {
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 여청바디 + 응답 바디)
 
+    //@CrossOrigin("*")
     @GetMapping("/todo")
     public ResponseEntity<List<TodoDto>> getTodoList() {  //ResponseEntity<?>
         List<Todo> todos = service.getList(TEMP_USER_ID);
@@ -36,21 +39,29 @@ public class TodoController {
 
     @PostMapping("/todo")
     public ResponseEntity<List<TodoDto>> createTodo(
-            @RequestBody Todo todo
+            @RequestBody TodoDto todoDto
     ) {
-        log.info(">>>> todo : {}", todo);
-        todo.setUserId(TEMP_USER_ID);
-        //  Todo todo = Todo.builder().userId(TEMP_USER_ID).title(title).build();
+        log.info(">>>> todo : {}", todoDto);
+        Todo todo = Todo.from(todoDto);
         service.create(todo);
 
         return getTodoList();
     }
 
+    @PostMapping(value = "/todo", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createTodo222(
+            @RequestBody String Body
+    ) {
+        log.info(">>>> Body : {}", Body);
+
+        return "{\"title\":\"테스트\"}";
+    }
+
     @PutMapping("/todo")
     public ResponseEntity<List<TodoDto>> updateTodo(
-            Integer id, String title, boolean done
+            @RequestBody TodoDto todoDto
     ) {
-        Todo todo = Todo.builder().id(id).userId(TEMP_USER_ID).title(title).done(done).build();
+        Todo todo = Todo.from(todoDto);
         service.update(todo);
 
         return getTodoList();
@@ -58,9 +69,9 @@ public class TodoController {
 
     @DeleteMapping("/todo")
     public ResponseEntity<List<TodoDto>> deleteTodo(
-            Integer id
+            @RequestBody TodoDto todoDto
     ) {
-        Todo todo = Todo.builder().userId(TEMP_USER_ID).id(id).build();
+        Todo todo = Todo.from(todoDto);
         service.delete(todo);
         return getTodoList();
     }
