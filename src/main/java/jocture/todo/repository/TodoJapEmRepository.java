@@ -2,20 +2,16 @@ package jocture.todo.repository;
 
 import jocture.todo.entity.Todo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class TodoJapEmRepository implements TodoRepository{
+public class TodoJapEmRepository implements TodoRepository {
 
     // @PersistenceContext
     private final EntityManager em;
@@ -27,7 +23,7 @@ public class TodoJapEmRepository implements TodoRepository{
 
     @Override
     public List<Todo> findAll() {
-        String jpql = "select t from Todo t"; // Java Persistence Query Language
+        String jpql = "select t from Todo t order by t.id desc"; // Java Persistence Query Language
         return em.createQuery(jpql, Todo.class)
                 .getResultList();
     }
@@ -35,24 +31,24 @@ public class TodoJapEmRepository implements TodoRepository{
     @Override
     public Optional<Todo> findById(Integer id) {
         String jpql = "select t from Todo t where t.id = :id";
-        try{
+        try {
 
-            Todo todo =  em.createQuery(jpql, Todo.class)
-                    .setParameter("id",id)
+            Todo todo = em.createQuery(jpql, Todo.class)
+                    .setParameter("id", id)
                     .getSingleResult();
             return Optional.of(todo);
-           // return Optional.ofNullable(todo);
-        }catch (NoResultException e){
+            // return Optional.ofNullable(todo);
+        } catch (NoResultException e) {
             return Optional.empty();
         }
     }
 
     @Override
     public List<Todo> findByUserId(String userId) {
-        String jpql = "select t from Todo t where t.userId = :userId";
-            return  em.createQuery(jpql, Todo.class)
-                    .setParameter("userId",userId)
-                    .getResultList();
+        String jpql = "select t from Todo t where t.userId = :userId order by t.id desc";
+        return em.createQuery(jpql, Todo.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     @Override
@@ -62,7 +58,7 @@ public class TodoJapEmRepository implements TodoRepository{
     }
 
     // TDD(Test-Driven Development) -> 텍스트 주도 개발
-   // -> 실제 메인 코드보다 테스트 코드를 먼저 만드는 개발방법론
+    // -> 실제 메인 코드보다 테스트 코드를 먼저 만드는 개발방법론
 
     @Override
     public void delete(Todo todo) {
@@ -73,13 +69,14 @@ public class TodoJapEmRepository implements TodoRepository{
     public void deleteById(Integer id) {
         findById(id).ifPresent(em::remove);
     }
+
     public void delete1(Todo todo) {
         deleteById1(todo.getId());
     }
 
     public void deleteById1(Integer id) {
         Optional<Todo> result = findById(id);
-        if(result.isPresent()){
+        if (result.isPresent()) {
             Todo todo = result.get();
             em.remove(todo);
         }
@@ -90,7 +87,7 @@ public class TodoJapEmRepository implements TodoRepository{
     }
 
     public void deleteById2(Integer id) { // Java 에서는 Method Signature (매소드 시그니쳐)
-       // Worst
+        // Worst
         /*
         Optional<Todo> result = findById(id);
         if(result.isPresent()){

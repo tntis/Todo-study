@@ -17,16 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserJpaEmRepositoryTest {
     @Autowired
     UserJpaEmRepository repository;
-    final String EMAIL = "tn@asc.com";
-
-    private User buildUser() {
-        User user = User.builder()
-                .username("tn")
-                .email(EMAIL)
-                .password("qwerr")
-                .build();
-        return user;
-    }
 
     @Test
     void basic() {
@@ -46,6 +36,17 @@ class UserJpaEmRepositoryTest {
         // assertThat(result.get()).isSameAs(user); // == 비교
 
         assertThat(exist).isTrue();
+    }
+
+    final String EMAIL = "tn@asc.com";
+
+    private User buildUser() {
+        User user = User.builder()
+                .username("tn")
+                .email(EMAIL)
+                .password("qwerr")
+                .build();
+        return user;
     }
 
     @Test

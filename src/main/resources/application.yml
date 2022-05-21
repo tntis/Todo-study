@@ -5,10 +5,11 @@
 #Slf4j 로깅레벨 : TRACE > DEBUG > INFO > WARN > ERROR > FATAL
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/test
+    url: jdbc:log4jdbc:h2:tcp://localhost/~/test
     username: sa
     password:
-    driver-class-name: org.h2.Driver
+    #driver-class-name: org.h2.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
   jpa:
     hibernate:
       ddl-auto: create # 운영환경에서는 none으로 설정
@@ -25,6 +26,7 @@ logging:
       SQL: DEBUG
       type: TRACE
       type.BasicTypeRegistry: INFO
-
+    jdbc:
+      resultset: OFF
 
 
