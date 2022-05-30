@@ -17,7 +17,8 @@ import java.util.List;
 //@Controller + @ResponseBody
 @RestController
 @RequiredArgsConstructor
-//@CrossOrigin(origins = {"http://localhost:3000"}, maxAge = 3600, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}) // Wedmvcconfig
+//@CrossOrigin(orgins = {"http://localhost:3000"}, maxAge = 3600, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}) // Wedmvcconfig
+@RequestMapping("/todo")
 public class TodoController {
 
     private static final String TEMP_USER_ID = "temp";
@@ -28,7 +29,7 @@ public class TodoController {
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 여청바디 + 응답 바디)
 
     //@CrossOrigin("*")
-    @GetMapping("/todo")
+    @GetMapping
     public ResponseEntity<List<TodoDto>> getTodoList() {  //ResponseEntity<?>
         List<Todo> todos = service.getList(TEMP_USER_ID);
         // JSON -> 객체를 표현하는 String
@@ -37,7 +38,7 @@ public class TodoController {
         return ResponseEntity.ok().body(TodoDto.todoDtoList(todos));
     }
 
-    @PostMapping("/todo")
+    @PostMapping
     public ResponseEntity<List<TodoDto>> createTodo(
             @RequestBody TodoDto todoDto
     ) {
@@ -48,7 +49,7 @@ public class TodoController {
         return getTodoList();
     }
 
-    @PostMapping(value = "/todo", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String createTodo222(
             @RequestBody String Body
     ) {
@@ -57,7 +58,7 @@ public class TodoController {
         return "{\"title\":\"테스트\"}";
     }
 
-    @PutMapping("/todo")
+    @PutMapping
     public ResponseEntity<List<TodoDto>> updateTodo(
             @RequestBody TodoDto todoDto
     ) {
@@ -67,7 +68,7 @@ public class TodoController {
         return getTodoList();
     }
 
-    @DeleteMapping("/todo")
+    @DeleteMapping
     public ResponseEntity<List<TodoDto>> deleteTodo(
             @RequestBody TodoDto todoDto
     ) {

@@ -4,14 +4,22 @@ import jocture.todo.entity.User;
 import jocture.todo.exception.ApplicationException;
 import jocture.todo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +35,7 @@ class UserServiceTest {
         //Given
         User user = null;
         // When & Then
-        Assertions.assertThatThrownBy(() -> service.signUp(user))
+        assertThatThrownBy(() -> service.signUp(user))
                 .isInstanceOf(ApplicationException.class);
 
     }
@@ -36,9 +44,10 @@ class UserServiceTest {
     void signUp_emailIsNull() {
         //Given
         String email = null;
-        User user = buildUser(email);
+        String password = "qweqwe";
+        User user = buildUser(email, password);
         // When & Then
-        Assertions.assertThatThrownBy(() -> service.signUp(user))
+        assertThatThrownBy(() -> service.signUp(user))
                 .isInstanceOf(ApplicationException.class);
 
     }
@@ -47,11 +56,12 @@ class UserServiceTest {
     void signUp_emaiAlreayExists() {
         //Given
         String email = "tn@asd.com";
-        User user = buildUser(email);
+        String password = "qweqwe";
+        User user = buildUser(email, password);
         // Method Mocking
-        Mockito.doReturn(true).when(repository).existByEmail(ArgumentMatchers.any());
+        doReturn(true).when(repository).existByEmail(any());
         // When & Then
-        Assertions.assertThatThrownBy(() -> service.signUp(user))
+        assertThatThrownBy(() -> service.signUp(user))
                 .isInstanceOf(ApplicationException.class);
 
     }
@@ -60,7 +70,8 @@ class UserServiceTest {
     void signUp_success() {
         //Given
         String email = "tn@asd.com";
-        User user = buildUser(email);
+        String password = "qweqwe";
+        User user = buildUser(email, password);
         log.info(">>> repository : {}", repository);
 
         // When
@@ -70,11 +81,69 @@ class UserServiceTest {
 
     }
 
-    private User buildUser(String email) {
+    private User buildUser(String email, String password) {
         return User.builder()
                 .username("tn")
                 .email(email)
-                .password("qwerr")
+                .password(password)
                 .build();
     }
+
+    @Test
+    void login() {
+        //Given
+        String email = "tn@asd.com";
+        String password = "qweqwe";
+        User user = buildUser(email, password);
+        doReturn(Optional.of(user))
+                .when(repository)
+                .findByEmailAndPassword(email, password);
+        //When
+        User result = service.login(email, password);  // Test Driven Development
+
+        //Then
+        assertThat(result).isEqualTo(user).isSameAs(user);
+    }
+
+    @Test
+    void login_Nodata() {
+        //Given
+        String email = "tn@asd.com";
+        String password = "qweqwe";
+        doReturn(Optional.empty())
+                .when(repository)
+                .findByEmailAndPassword(email, password);
+        //When
+        User result = service.login(email, password);  // Test Driven Development
+
+        //Then
+        assertThat(result).isNull();
+    }
+
+    @ParameterizedTest(name = "[{index}] {0} is blank value") // {index} {0 : paramper}
+    @ValueSource(strings = {" ", "  ", "\n", "\r"})
+    @NullAndEmptySource
+        // @Nullable + @EmptySource
+    void login_Nomail(String email) {
+        //Given
+        String password = "qweqwe";
+        //When
+        //Then
+        assertThatThrownBy(() -> service.login(email, password))
+                .isInstanceOf(ApplicationException.class);
+
+    }
+
+    @ParameterizedTest(name = "[{index}] {0} is blank value")
+    @ValueSource(strings = {" ", "  ", "\n", "\r"})
+    @NullAndEmptySource
+    void login_NoPassword(String password) {
+        //Given
+        String email = "tn@asd.com";
+        //When
+        //Then
+        assertThatThrownBy(() -> service.login(email, password))
+                .isInstanceOf(ApplicationException.class);
+    }
+
 }
