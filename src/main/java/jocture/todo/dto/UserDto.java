@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor // 당장은 다른 생성자가 없을 때도, 정의해 줘야 나중에 오루 발생 가능성이 줄어든다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // builder를 위해 필요
-@JsonInclude(JsonInclude.Include.NON_NULL)   // jackson 라이브러리가 디시리얼라이즈,시리얼라이즈를 해줌
+@JsonInclude(JsonInclude.Include.NON_NULL)   // jackson 라이브러리가 디시리얼라이즈,시리얼라이즈를 해줌 (객체를 json String 으로변환 해쥬는 : 시리얼라이즈)  
 public class UserDto {
 
     private String id;

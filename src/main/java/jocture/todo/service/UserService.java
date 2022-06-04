@@ -32,7 +32,7 @@ public class UserService {
         repository.save(user);
     }
 
-    public User login(String email, String password) {
+    public User login(String email, String password) throws ApplicationException {
         if (!StringUtils.hasText(email)) {
             //email == null || email.isBlank()
             log.warn("Email is blank");

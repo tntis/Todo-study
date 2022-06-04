@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,7 +55,7 @@ class userControllerTest {
         doAnswer(invocation -> {
             Object[] args = invocation.getArguments();
             User user = (User) args[0];
-            ReflectionTestUtils.setField(user, "Id", "asd");
+            ReflectionTestUtils.setField(user, "id", "asd");
             return null;
         }).when(userService).signUp(any());
 
@@ -94,8 +93,37 @@ class userControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 // .andDo(print())
                 // .andExpect(status().is(200))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andReturn();
+    }
+
+    @Test
+    void logIn_seccess() throws Exception {
+        //given
+        String url = "/auth/login";
+        UserDto userDto = UserDto.builder()
+                .email("tn@asd.com")
+                .password("PaSs")
+                .build();
+
+        String body = objectMapper.writeValueAsString(userDto);
+        //메서드 모킹
+        doReturn(User.builder()
+                .id("sert")
+                .email(userDto.getEmail())
+                .username(userDto.getUsername())
+                .build()).when(userService).login(anyString(), any());
+
+        // when & then
+        MvcResult mvcResult = mvc.perform(
+                        post(url).content(body)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                // .andExpect(status().is(200))
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseBody = mvcResult.getResponse().getContentAsString();
+        log.debug(">>>> responseBody  : {}  ", responseBody);
     }
 
 }
