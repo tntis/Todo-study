@@ -1,12 +1,13 @@
 package jocture.todo.controller;
 
 import jocture.todo.dto.TodoDto;
+import jocture.todo.dto.response.ResponseDto;
+import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
 import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,16 +31,18 @@ public class TodoController {
 
     //@CrossOrigin("*")
     @GetMapping
-    public ResponseEntity<List<TodoDto>> getTodoList() {  //ResponseEntity<?>
+    public ResponseDto<List<TodoDto>> getTodoList() {  //ResponseEntity<?>
         List<Todo> todos = service.getList(TEMP_USER_ID);
         // JSON -> 객체를 표현하는 String
         // 객체를 JSON 스트링으로 변환 -> HttpMessageConverter (Serialize/Serializer)
         // JSON 스트링을 객체로 변황 -> HttpMessageConverter (Deserialize/Deserializer)
-        return ResponseEntity.ok().body(TodoDto.todoDtoList(todos));
+
+        ResponseResultDto<List<TodoDto>> restponceData = ResponseResultDto.of(TodoDto.todoDtoList(todos));
+        return ResponseDto.of(restponceData);
     }
 
     @PostMapping
-    public ResponseEntity<List<TodoDto>> createTodo(
+    public ResponseDto<List<TodoDto>> createTodo(
             @RequestBody TodoDto todoDto
     ) {
         log.info(">>>> todo : {}", todoDto);
@@ -59,7 +62,7 @@ public class TodoController {
     }
 
     @PutMapping
-    public ResponseEntity<List<TodoDto>> updateTodo(
+    public ResponseDto<List<TodoDto>> updateTodo(
             @RequestBody TodoDto todoDto
     ) {
         Todo todo = Todo.from(todoDto);
@@ -69,7 +72,7 @@ public class TodoController {
     }
 
     @DeleteMapping
-    public ResponseEntity<List<TodoDto>> deleteTodo(
+    public ResponseDto<List<TodoDto>> deleteTodo(
             @RequestBody TodoDto todoDto
     ) {
         Todo todo = Todo.from(todoDto);

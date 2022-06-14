@@ -2,6 +2,7 @@ package jocture.todo.controller;
 
 import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
+import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
 import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +48,10 @@ public class UserController {
                     .username(user.getUsername())
                     .email(user.getEmail())
                     .build();
+            //ResponseResultPageDto dataPage = ResponseResultPageDto.of(1, 20, 15);
+            ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(responceUserDto /* , dataPage*/);
 
-            return ResponseDto.of(responceUserDto);
+            return ResponseDto.of(responseDto);
 
         } catch (Exception e) {
             log.error("signUp() Exception ->", e);
@@ -82,9 +85,8 @@ public class UserController {
                 .email(user.getEmail())
                 .build();
 
-        // 타입 추론(Type Inference)
-        ResponseDto<UserDto> responseDto = ResponseDto.of(responceUserDto);
+        ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(responceUserDto);
 
-        return responseDto;
+        return ResponseDto.of(responseDto);
     }
 }
