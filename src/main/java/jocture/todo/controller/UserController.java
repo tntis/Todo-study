@@ -4,6 +4,7 @@ import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
+import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseDto<UserDto> signUp(
@@ -26,13 +28,18 @@ public class UserController {
     ) {
         log.debug(">>> userDto : {}", userDto);
 
+
         // UserDto -> User  변환
-        User user = User.builder()
+       /* User user = User.builder()
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
                 .password(userDto.getPassword())
-                .build();
+                .build();*/
 
+        //   UserMapperImpl userMapper = new UserMapperImpl();
+
+        User user = userMapper.toEntity(userDto);
+        log.debug(">>> user2 : {}", user);
 
         try {
             // Service Layer(서비스 계층)에 위임
@@ -43,11 +50,14 @@ public class UserController {
             //Java 10 애서 var 키워드 추가(Kotlin 언어에서 쓰는 방식)
 
             // 응답
-            var responceUserDto = UserDto.builder()
+            UserDto responceUserDto = userMapper.toDto(user);
+           /* var responceUserDto = UserDto.builder()
                     .id(user.getId())
                     .username(user.getUsername())
                     .email(user.getEmail())
-                    .build();
+                    .build();*/
+
+
             //ResponseResultPageDto dataPage = ResponseResultPageDto.of(1, 20, 15);
             ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(responceUserDto /* , dataPage*/);
 
@@ -79,13 +89,14 @@ public class UserController {
         String password = userDto.getPassword();
         User user = userService.login(email, password);
 
-        UserDto responceUserDto = UserDto.builder()
+
+      /*  UserDto responceUserDto = UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .build();
+                .build();*/
 
-        ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(responceUserDto);
+        ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(userMapper.toDto(user));
 
         return ResponseDto.of(responseDto);
     }

@@ -1,6 +1,5 @@
 package jocture.todo.entity;
 
-import jocture.todo.dto.TodoDto;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -40,14 +39,14 @@ public class Todo {
 
     private boolean done;
 
-    public static Todo from(TodoDto dto) {
+   /* public static Todo from(TodoDto dto) {
         return Todo.builder()
                 .id(dto.getId())
                 .userId(TEMP_USER_ID)
                 .title(dto.getTitle())
                 .done(dto.isDone())
                 .build();
-    }
+    }*/
 
 }
 //@JsonIgnore
