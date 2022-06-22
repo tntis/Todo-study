@@ -21,8 +21,8 @@ public class User {
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
 
-    private String memberName;
-    //username;
+    private String username;
+//    memberName
 
     private String email;
 

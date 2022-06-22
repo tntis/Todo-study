@@ -8,23 +8,50 @@ package jocture.todo.dto.response;
  V - Value
 */
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jocture.todo.type.ResponseCode;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // 불변(Immutable) 객체로 만드는게 좋다. => setter 메소드는 없어야한다.
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+//@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter // Serialize : Json객체를 String으로 변황
 public class ResponseDto<T> {
 
-    private static final String SUCCESS_CODE = "0000";
-    private static final String SUCCESS_MESSAGE = "성공";
+   /* private static final String SUCCESS_MESSAGE = "성공";
+    public static final String BAD_REQUEST_MESSAGE = "잘못된 요청";*/
 
     private String code;
     private String message;
-    private ResponseResultDto<T> result; // Association 관계(연관관계) -> Aggregation(집약관계)
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ResponseResultDto<T> result; // Association 관계(연관관계)
     // result 에는 단일값
-/*
+
+    private List<String> errors;
+
+    private ResponseDto(String code, String message, ResponseResultDto<T> result) {
+        this.code = code;
+        this.message = message;
+        this.result = result;
+    }
+
+    private ResponseDto(String code, String message, String errorMessage) {
+        this.code = code;
+        this.message = message;
+        addError(errorMessage);
+    }
+
+    private ResponseDto(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    /*
 // 전체 생성자를 선언 해줬기 떄문에 지워도됨
 
     private ResponseDto(String code, String message, T result) {
@@ -42,16 +69,41 @@ public class ResponseDto<T> {
 
      */
     public static <T> ResponseDto<T> of(ResponseResultDto<T> result) {
-        //  Composition(합성관계)
 
-        return new ResponseDto<>(SUCCESS_CODE, SUCCESS_MESSAGE, result);
+        return new ResponseDto<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.getMessage(), result);
     }
 
-   /* public static <T> ResponseDto<T> of(String code, String message, T result) {
-        return new ResponseDto<>(code, message, result);
-    }*/
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseResultDto<T> result) {
+        return ResponseEntity.ok(
+                new ResponseDto<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.getMessage(), result));
+    }
+
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseCode responseCode) {
+        HttpStatus httpStatus = responseCode.getHttpStatus();
+        return ResponseEntity.status(httpStatus).body(
+                new ResponseDto<>(responseCode.code(), responseCode.getMessage()));
+    }
+
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseCode responseCode, ResponseResultDto<T> result) {
+        HttpStatus httpStatus = responseCode.getHttpStatus();
+        return ResponseEntity.status(httpStatus).body(
+                new ResponseDto<>(responseCode.code(), responseCode.getMessage(), result));
+    }
+
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseCode responseCode, String errorMessage) {
+        HttpStatus httpStatus = responseCode.getHttpStatus();
+        return ResponseEntity.status(httpStatus).body(
+                new ResponseDto<>(responseCode.code(), responseCode.getMessage(), errorMessage));
+    }
+
+    public void addError(String message) {
+        if (errors == null) {
+            errors = new ArrayList<>();
+        }
+        errors.add(message);
+    }
 }
-    /* 정적 팩토리 메서드의 명명 방식 관례
+    /*  팩토리 메서드의 명명 방식 관례
     - from
         - 하나의 매개변수를 받아 해당 타입의 인스턴스를 반환하는 형변환 메서드
     - of
