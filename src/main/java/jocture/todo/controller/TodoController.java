@@ -1,6 +1,9 @@
 package jocture.todo.controller;
 
+import jocture.todo.dto.TodoCreateDto;
+import jocture.todo.dto.TodoDeleteDto;
 import jocture.todo.dto.TodoDto;
+import jocture.todo.dto.TodoUpdateDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 // 스프링 3계층(레이어) -> @Controller, @service, @Repository
@@ -45,7 +49,7 @@ public class TodoController {
 
     @PostMapping
     public ResponseDto<List<TodoDto>> createTodo(
-            @RequestBody TodoDto todoDto
+            @RequestBody @Valid TodoCreateDto todoDto
     ) {
         log.info(">>>> todo : {}", todoDto);
         // Todo todo = Todo.from(todoDto); // TodoDto 를 todo 객체로 변환한다.
@@ -68,9 +72,10 @@ public class TodoController {
 
     @PutMapping
     public ResponseDto<List<TodoDto>> updateTodo(
-            @RequestBody TodoDto todoDto
+            @RequestBody @Valid TodoUpdateDto todoDto
     ) {
         // Todo todo = Todo.from(todoDto);
+        log.info(">>>> updateTodo :: {}", todoDto);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(TEMP_USER_ID);
         service.update(todo);
@@ -80,7 +85,7 @@ public class TodoController {
 
     @DeleteMapping
     public ResponseDto<List<TodoDto>> deleteTodo(
-            @RequestBody TodoDto todoDto
+            @RequestBody @Valid TodoDeleteDto todoDto
     ) {
         //  Todo todo = Todo.from(todoDto);
         Todo todo = todoMapper.toEntity(todoDto);

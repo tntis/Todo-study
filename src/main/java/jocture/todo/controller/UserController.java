@@ -4,15 +4,16 @@ import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
-import jocture.todo.exception.ApplicationException;
 import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
-import jocture.todo.type.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController // @Controller + @ResponseBody
@@ -67,7 +68,7 @@ public class UserController {
     // entity 객체를 퍼시스트할떄?
 
     // setter 와 builder의 관계성?.. 찾아보기
-
+/*
     // 해당 컨트럴러에서 쓰고 던져 컨트롤러 사용하려면 컨텍스트핸들러
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<?> applicationExcetionHandler(Exception e) { // Throwable
@@ -81,7 +82,7 @@ public class UserController {
         log.error("exceptionHandler -> ", e);
         return ResponseEntity.badRequest().body(e.getMessage());
     }
-
+*/
     @PostMapping("/login")
     public ResponseDto<UserDto> logIn(
             @RequestBody UserDto userDto

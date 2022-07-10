@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 /*
     JPA
-    -> java의 표준 ORM
+    -> java의 표준 ORM (Object-Relational Mapping)
     -> 스펙, 규격, 표준
     -> 구현체가 필요하다
         -> Hibernate(디폴트)
