@@ -1,9 +1,12 @@
 package jocture.todo.dto;
 
+import jocture.todo.controller.validation.marker.TodoValidationGroup;
 import jocture.todo.entity.Todo;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +18,12 @@ import java.util.stream.Collectors;
 @ToString
 public class TodoDto {
 
+    @NotNull(groups = {TodoValidationGroup.Update.class, TodoValidationGroup.Deletion.class})
     private Integer id;
+
+    @NotBlank(groups = {TodoValidationGroup.Creation.class, TodoValidationGroup.Update.class})
     private String title;
+
     private boolean done;
 
     // 인스턴스(Instance) 메소드

@@ -3,16 +3,13 @@ package jocture.todo.mapper;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
-import jocture.todo.dto.TodoCreateDto;
-import jocture.todo.dto.TodoDeleteDto;
 import jocture.todo.dto.TodoDto;
-import jocture.todo.dto.TodoUpdateDto;
 import jocture.todo.entity.Todo;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-07-10T21:38:40+0900",
+    date = "2022-07-11T20:33:02+0900",
     comments = "version: 1.5.1.Final, compiler: javac, environment: Java 11.0.14 (Amazon.com Inc.)"
 )
 @Component
@@ -29,47 +26,6 @@ public class TodoMapperImpl implements TodoMapper {
         todo.id( dto.getId() );
         todo.title( dto.getTitle() );
         todo.done( dto.isDone() );
-
-        return todo.build();
-    }
-
-    @Override
-    public Todo toEntity(TodoCreateDto dto) {
-        if ( dto == null ) {
-            return null;
-        }
-
-        Todo.TodoBuilder todo = Todo.builder();
-
-        todo.title( dto.getTitle() );
-
-        return todo.build();
-    }
-
-    @Override
-    public Todo toEntity(TodoUpdateDto dto) {
-        if ( dto == null ) {
-            return null;
-        }
-
-        Todo.TodoBuilder todo = Todo.builder();
-
-        todo.id( dto.getId() );
-        todo.title( dto.getTitle() );
-        todo.done( dto.isDone() );
-
-        return todo.build();
-    }
-
-    @Override
-    public Todo toEntity(TodoDeleteDto dto) {
-        if ( dto == null ) {
-            return null;
-        }
-
-        Todo.TodoBuilder todo = Todo.builder();
-
-        todo.id( dto.getId() );
 
         return todo.build();
     }

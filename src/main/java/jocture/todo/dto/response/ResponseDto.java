@@ -32,7 +32,8 @@ public class ResponseDto<T> {
     private ResponseResultDto<T> result; // Association 관계(연관관계)
     // result 에는 단일값
 
-    private List<String> errors;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ResponseErrorDto> errors;
 
     private ResponseDto(String code, String message, ResponseResultDto<T> result) {
         this.code = code;
@@ -40,10 +41,16 @@ public class ResponseDto<T> {
         this.result = result;
     }
 
-    private ResponseDto(String code, String message, String errorMessage) {
+    private ResponseDto(String code, String message, ResponseErrorDto error) {
         this.code = code;
         this.message = message;
-        addError(errorMessage);
+        addError(error);
+    }
+
+    private ResponseDto(String code, String message, List<ResponseErrorDto> errors) {
+        this.code = code;
+        this.message = message;
+        this.errors = errors;
     }
 
     private ResponseDto(String code, String message) {
@@ -90,17 +97,24 @@ public class ResponseDto<T> {
                 new ResponseDto<>(responseCode.code(), responseCode.getMessage(), result));
     }
 
-    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseCode responseCode, String errorMessage) {
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseCode responseCode, ResponseErrorDto error) {
         HttpStatus httpStatus = responseCode.getHttpStatus();
         return ResponseEntity.status(httpStatus).body(
-                new ResponseDto<>(responseCode.code(), responseCode.getMessage(), errorMessage));
+                new ResponseDto<>(responseCode.code(), responseCode.getMessage(), error));
     }
 
-    public void addError(String message) {
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseCode responseCode, List<ResponseErrorDto> errors) {
+        HttpStatus httpStatus = responseCode.getHttpStatus();
+        return ResponseEntity.status(httpStatus).body(
+                new ResponseDto<>(responseCode.code(), responseCode.getMessage(), errors));
+    }
+
+    // 인스턴스 메서드(vs. 스태틱 메서드
+    public void addError(ResponseErrorDto error) {
         if (errors == null) {
             errors = new ArrayList<>();
         }
-        errors.add(message);
+        errors.add(error);
     }
 }
     /*  팩토리 메서드의 명명 방식 관례

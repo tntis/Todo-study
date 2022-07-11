@@ -1,9 +1,7 @@
 package jocture.todo.controller;
 
-import jocture.todo.dto.TodoCreateDto;
-import jocture.todo.dto.TodoDeleteDto;
+import jocture.todo.controller.validation.marker.TodoValidationGroup;
 import jocture.todo.dto.TodoDto;
-import jocture.todo.dto.TodoUpdateDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
@@ -12,9 +10,9 @@ import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 // 스프링 3계층(레이어) -> @Controller, @service, @Repository
@@ -49,7 +47,7 @@ public class TodoController {
 
     @PostMapping
     public ResponseDto<List<TodoDto>> createTodo(
-            @RequestBody @Valid TodoCreateDto todoDto
+            @RequestBody @Validated(TodoValidationGroup.Creation.class) TodoDto todoDto
     ) {
         log.info(">>>> todo : {}", todoDto);
         // Todo todo = Todo.from(todoDto); // TodoDto 를 todo 객체로 변환한다.
@@ -72,7 +70,8 @@ public class TodoController {
 
     @PutMapping
     public ResponseDto<List<TodoDto>> updateTodo(
-            @RequestBody @Valid TodoUpdateDto todoDto
+            @RequestBody @Validated(TodoValidationGroup.Update.class) TodoDto todoDto
+            //@Valid 자바에서 제공
     ) {
         // Todo todo = Todo.from(todoDto);
         log.info(">>>> updateTodo :: {}", todoDto);
@@ -85,7 +84,7 @@ public class TodoController {
 
     @DeleteMapping
     public ResponseDto<List<TodoDto>> deleteTodo(
-            @RequestBody @Valid TodoDeleteDto todoDto
+            @RequestBody @Validated(TodoValidationGroup.Deletion.class) TodoDto todoDto
     ) {
         //  Todo todo = Todo.from(todoDto);
         Todo todo = todoMapper.toEntity(todoDto);
