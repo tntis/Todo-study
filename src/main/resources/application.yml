@@ -4,9 +4,11 @@
 
 #Slf4j 로깅레벨 : TRACE > DEBUG > INFO > WARN > ERROR > FATAL
 spring:
+  #  profiles:
+  #    active: local
   datasource:
     url: jdbc:log4jdbc:h2:tcp://localhost/~/test
-    username: sa
+    username: ENC(qglsS3tifkvCD/bwyVf+0Q==)
     password:
     #driver-class-name: org.h2.Driver
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy

@@ -10,12 +10,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -39,7 +35,6 @@ class TodoJapEmRepositoryTest {
 
         //then
         Assertions.assertThat(all).hasSize(2);
-        Assertions.assertThat(all).filteredOn(m -> Objects.equals(m, todo1)).isSameAs(todo1);
 
     }
 
@@ -56,10 +51,10 @@ class TodoJapEmRepositoryTest {
     @Test
     void findById() {
         //given
-        Todo todo1 = saveTodo("밥먹기");
-        Todo todo2 = saveTodo("청소하기");
+        Todo todo1 = saveTodo("밥 먹기");
+        Todo todo2 = saveTodo("청소하기 ");
         //when
-       Optional<Todo> result = repository.findById(todo1.getId());
+        Optional<Todo> result = repository.findById(todo1.getId());
 
         //then
         Assertions.assertThat(result).isPresent();
@@ -96,7 +91,7 @@ class TodoJapEmRepositoryTest {
     @Test
     @Rollback(value = false)
     void save() {
-        log.info("repository : {}" , repository);
+        log.info("repository : {}", repository);
         // Given
         Todo todo1 = Todo.builder().userId(USER_NAME).title("자바 공부하기").done(false).build();
         Todo todo2 = Todo.builder().userId(USER_NAME).title("자바 공부하기2").done(false).build();
@@ -104,7 +99,7 @@ class TodoJapEmRepositoryTest {
         // When
         repository.save(todo1);
         repository.save(todo2);
-      //  em.flush();
+        //  em.flush();
 
         // Then
         Assertions.assertThat(repository.findById(todo1.getId())).isPresent();
@@ -113,7 +108,7 @@ class TodoJapEmRepositoryTest {
     }
 
     @Test
-    void delete(){
+    void delete() {
         // Given
         Todo todo1 = saveTodo("배고파");
 
@@ -127,7 +122,7 @@ class TodoJapEmRepositoryTest {
 
 
     @Test
-    void deleteById(){
+    void deleteById() {
         // Given
         Todo todo1 = saveTodo("배고파");
 

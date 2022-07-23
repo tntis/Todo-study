@@ -8,6 +8,9 @@ import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -48,7 +51,7 @@ class userControllerTest {
         UserDto userDto = UserDto.builder()
                 .username("test")
                 .email("tn@asd.com")
-                .password("PaSs")
+                .password("PaSswords4")
                 .build();
 
         String body = objectMapper.writeValueAsString(userDto);
@@ -73,13 +76,74 @@ class userControllerTest {
     }
 
     @Test
+    void signUp_validationFail_email() throws Exception {
+        //given
+        String url = "/auth/signup";
+        UserDto userDto = UserDto.builder()
+                .username("test")
+                .email("tnasd.com")
+                .password("PaSswords4")
+                .build();
+
+        String body = objectMapper.writeValueAsString(userDto);
+
+        // when & then
+        mvc.perform(post(url).content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "\t"})
+    void signUp_validationFail_username(String username) throws Exception {
+        //given
+        String url = "/auth/signup";
+        UserDto userDto = UserDto.builder()
+                .username(username)
+                .email("tna@sd.com")
+                .password("PaSswords4")
+                .build();
+
+        String body = objectMapper.writeValueAsString(userDto);
+
+        // when & then
+        mvc.perform(post(url).content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void signUp_validationFail_password() throws Exception {
+        //given
+        String url = "/auth/signup";
+        UserDto userDto = UserDto.builder()
+                .username("test")
+                .email("tna@sd.com")
+                .password("PaSswords") // Invalid pattern
+                .build();
+
+        String body = objectMapper.writeValueAsString(userDto);
+
+        // when & then
+        mvc.perform(post(url).content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     void signUp_exception() throws Exception {
         //given
         String url = "/auth/signup";
         UserDto userDto = UserDto.builder()
                 .email("tn@asd.com")
                 .username("test")
-                .password("PaSs")
+                .password("PaSsword3")
                 .build();
 
         String body = objectMapper.writeValueAsString(userDto);
@@ -94,7 +158,7 @@ class userControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 // .andDo(print())
                 // .andExpect(status().is(200))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andReturn();
     }
 
@@ -104,7 +168,7 @@ class userControllerTest {
         String url = "/auth/login";
         UserDto userDto = UserDto.builder()
                 .email("tn@asd.com")
-                .password("PaSs")
+                .password("PaSsword5")
                 .build();
 
         String body = objectMapper.writeValueAsString(userDto);
@@ -126,6 +190,44 @@ class userControllerTest {
         String responseBody = mvcResult.getResponse().getContentAsString();
         log.debug(">>>> responseBody  : {}  ", responseBody);
     }
+
+    @Test
+    void logIn_validationFail_email() throws Exception {
+        //given
+        String url = "/auth/login";
+        UserDto userDto = UserDto.builder()
+                .email("tnasd.com")
+                .password("PaSsword5")
+                .build();
+
+        String body = objectMapper.writeValueAsString(userDto);
+
+        // when & then
+        mvc.perform(post(url).content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void logIn_validationFail_password(String pass) throws Exception {
+        //given
+        String url = "/auth/login";
+        UserDto userDto = UserDto.builder()
+                .email("tn@asd.com")
+                .password(pass)
+                .build();
+
+        String body = objectMapper.writeValueAsString(userDto);
+
+        // when & then
+        mvc.perform(post(url).content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
 
 }
 

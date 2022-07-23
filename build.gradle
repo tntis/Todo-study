@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 
     annotationProcessor 'org.projectlombok:lombok'
 

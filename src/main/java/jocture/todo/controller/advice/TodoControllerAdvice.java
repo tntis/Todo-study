@@ -2,6 +2,7 @@ package jocture.todo.controller.advice;
 
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseErrorDto;
+import jocture.todo.exception.ApplicationException;
 import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class TodoControllerAdvice {
+public class TodoControllerAdvice { //Todo
 /*
     @ExceptionHandler
     public ResponseEntity<?> globalExceptionHandler(Exception e) { // Throwable
@@ -59,12 +60,12 @@ public class TodoControllerAdvice {
 
     }
 
-/*    @ExceptionHandler//(ApplicationException.class)
-    public ResponseEntity<?> applicationExcetionHandler(ApplicationException e) { // Throwable
-        log.error("public ResponseEntity<?> applicationExcetionHandler -> ", e);
-        return ResponseDto.responseEntityof(ResponseCode.BAD_REQUEST, e.getMessage());
+    @ExceptionHandler//(ApplicationException.class)
+    public ResponseEntity<?> applicationExceptionHandler(ApplicationException e) { // Throwable
+        log.error("public ResponseEntity<?> applicationExceptionHandler -> ", e);
+        return ResponseEntity.internalServerError().body(e.getMessage());
 
-    }*/
+    }
 
 
 }
