@@ -8,13 +8,14 @@ spring:
   #    active: local
   datasource:
     url: jdbc:log4jdbc:h2:tcp://localhost/~/test
-    username: ENC(qglsS3tifkvCD/bwyVf+0Q==)
+    username: sa
+    #ENC(qglsS3tifkvCD/bwyVf+0Q==)
     password:
     #driver-class-name: org.h2.Driver
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
   jpa:
     hibernate:
-      ddl-auto: create # 운영환경에서는 none으로 설정
+      ddl-auto: none # 운영환경에서는 none으로 설정
     properties:
       hibernate:
         use_sql_comments: true

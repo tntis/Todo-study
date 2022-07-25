@@ -114,10 +114,8 @@ class UserServiceTest {
                 .when(repository)
                 .findByEmailAndPassword(email, password);
         //When
-        User result = service.login(email, password);  // Test Driven Development
-
         //Then
-        assertThat(result).isNull();
+        // assertThatThrownBy(()-> );
     }
 
     @ParameterizedTest(name = "[{index}] {0} is blank value") // {index} {0 : paramper}

@@ -7,6 +7,7 @@ import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
 import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
+import jocture.todo.type.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -92,17 +93,9 @@ public class UserController {
         log.debug(">>> userDto : {}", userDto);
         String email = userDto.getEmail();
         String password = userDto.getPassword();
+
         User user = userService.login(email, password);
-
-
-      /*  UserDto responceUserDto = UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .build();*/
-
         ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(userMapper.toDto(user));
-
-        return ResponseDto.of(responseDto);
+        return ResponseDto.of(ResponseCode.SUCCESS);
     }
 }

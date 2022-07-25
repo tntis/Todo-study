@@ -1,8 +1,6 @@
 package jocture.todo.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -12,6 +10,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)// Jpa 스팩..
+@AllArgsConstructor(access = AccessLevel.PRIVATE)// Builder에서 필요
 @Builder
 @Getter
 @ToString

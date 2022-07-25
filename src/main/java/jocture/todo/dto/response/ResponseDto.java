@@ -58,6 +58,11 @@ public class ResponseDto<T> {
         this.message = message;
     }
 
+    private ResponseDto(ResponseCode responseCode) {
+        this.code = responseCode.code();
+        this.message = responseCode.getMessage();
+    }
+
     /*
 // 전체 생성자를 선언 해줬기 떄문에 지워도됨
 
@@ -76,8 +81,11 @@ public class ResponseDto<T> {
 
      */
     public static <T> ResponseDto<T> of(ResponseResultDto<T> result) {
-
         return new ResponseDto<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.getMessage(), result);
+    }
+
+    public static <T> ResponseDto<T> of(ResponseCode responseCode) {
+        return new ResponseDto<>(responseCode);
     }
 
     public static <T> ResponseEntity<ResponseDto<T>> responseEntityof(ResponseResultDto<T> result) {
