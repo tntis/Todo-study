@@ -29,7 +29,7 @@ logging:
       SQL: DEBUG
       type: TRACE
       type.BasicTypeRegistry: INFO
-    jdbc:
-      resultset: OFF
+    jdbc: WARN
+    #  resultset: OFF
 
 

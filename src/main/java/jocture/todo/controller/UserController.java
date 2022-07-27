@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController // @Controller + @ResponseBody
 @RequiredArgsConstructor
@@ -88,14 +91,24 @@ public class UserController {
 */
     @PostMapping("/login")
     public ResponseDto<UserDto> logIn(
-            @RequestBody @Validated({UserVailidationGroup.Login.class}) UserDto userDto
+            @RequestBody @Validated({UserVailidationGroup.Login.class}) UserDto userDto,
+            HttpServletResponse response
     ) {
         log.debug(">>> userDto : {}", userDto);
         String email = userDto.getEmail();
         String password = userDto.getPassword();
 
         User user = userService.login(email, password);
-        ResponseResultDto<UserDto> responseDto = ResponseResultDto.of(userMapper.toDto(user));
+        Cookie idCookie = new Cookie("userId", user.getId());
+        idCookie.setPath("/");
+        idCookie.setMaxAge(0);
+        response.addCookie(idCookie);
+
+        return ResponseDto.of(ResponseCode.SUCCESS);
+    }
+
+    @PostMapping("/logout")
+    public ResponseDto<UserDto> logOut() {
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 }
