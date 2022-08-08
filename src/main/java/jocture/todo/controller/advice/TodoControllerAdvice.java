@@ -3,17 +3,14 @@ package jocture.todo.controller.advice;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseErrorDto;
 import jocture.todo.exception.ApplicationException;
-import jocture.todo.exception.LoginFailException;
-import jocture.todo.exception.NoAuthenticationException;
+import jocture.todo.exception.AuthenticationProblemException;
 import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
@@ -53,11 +50,14 @@ public class TodoControllerAdvice { //Todo
 
     }
 
-    @ExceptionHandler({LoginFailException.class, NoAuthenticationException.class})
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<?> loginProblemExceptionHandler(RuntimeException e) { // Throwable
+    /* @ExceptionHandler({AuthenticationProblemException.class})
+     @ResponseStatus(HttpStatus.UNAUTHORIZED)*/
+    @ExceptionHandler
+    public ResponseEntity<?> loginProblemExceptionHandler(AuthenticationProblemException e) { // Throwable
         log.error("loginProblemExceptionHandler -> {} {}", e.getClass().getSimpleName(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
+        ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
+        return ResponseDto.responseEntityof(ResponseCode.UNAUTHORIZED, responseError);
+        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
 
     }
 

@@ -101,14 +101,18 @@ public class UserController {
         User user = userService.login(email, password);
         Cookie idCookie = new Cookie("userId", user.getId());
         idCookie.setPath("/");
-        idCookie.setMaxAge(0);
         response.addCookie(idCookie);
 
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 
     @PostMapping("/logout")
-    public ResponseDto<UserDto> logOut() {
+    public ResponseDto<UserDto> logOut(HttpServletResponse response) {
+        Cookie idCookie = new Cookie("userId", "");
+        idCookie.setPath("/");
+        idCookie.setMaxAge(0);
+        response.addCookie(idCookie);
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
+
 }

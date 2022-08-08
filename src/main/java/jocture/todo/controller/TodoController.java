@@ -5,9 +5,11 @@ import jocture.todo.dto.TodoDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
-import jocture.todo.exception.NoAuthenticationException;
+import jocture.todo.exception.InvalidUserException;
+import jocture.todo.exception.RequiredAuthenticationException;
 import jocture.todo.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
+import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -30,12 +32,14 @@ import java.util.Optional;
 @RequestMapping("/todo")
 public class TodoController {
 
-    private final TodoService service;
+    private final TodoService todoService;
+    private final UserService userService;
     private final TodoMapper todoMapper;
 
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 여청바디 + 응답 바디)
 
+    @Deprecated(since = "2.0")
     @GetMapping("/v1") // 사용 노노
     public ResponseDto<List<TodoDto>> getTodoList(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -58,16 +62,20 @@ public class TodoController {
     }
 
     private void validateUser(String userId) {
-        if (userId == null) {
-            throw new NoAuthenticationException("로그인을 하셔야 합니다.");
+        if (userId == null || userId.isBlank()) {
+            throw new RequiredAuthenticationException("로그인을 하셔야 합니다.");
         }
+        if (!userService.existsUser(userId)) {
+            throw new InvalidUserException("유효한 회원이 아닙니다.");
+        }
+
     }
 
 
     //@CrossOrigin("*")
     @GetMapping
     public ResponseDto<List<TodoDto>> getRealTodoList(String userId) {  //ResponseEntity<?>
-        List<Todo> todos = service.getList(userId);
+        List<Todo> todos = todoService.getList(userId);
         // JSON -> 객체를 표현하는 String
         // 객체를 JSON 스트링으로 변환 -> HttpMessageConverter (Serialize/Serializer)
         // JSON 스트링을 객체로 변황 -> HttpMessageConverter (Deserialize/Deserializer)
@@ -89,7 +97,7 @@ public class TodoController {
 
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(userId);
-        service.create(todo);
+        todoService.create(todo);
 
         return getRealTodoList(userId);
     }
@@ -114,7 +122,7 @@ public class TodoController {
         validateUser(userId);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(userId);
-        service.update(todo);
+        todoService.update(todo);
 
         return getRealTodoList(userId);
     }
@@ -127,7 +135,7 @@ public class TodoController {
         validateUser(userId);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(userId);
-        service.delete(todo);
+        todoService.delete(todo);
         return getRealTodoList(userId);
     }
 }

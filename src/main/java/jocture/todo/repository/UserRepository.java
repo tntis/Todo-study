@@ -13,4 +13,6 @@ public interface UserRepository {
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
+    Optional<User> findById(String userId);
+
 }

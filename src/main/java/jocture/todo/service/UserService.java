@@ -46,4 +46,8 @@ public class UserService {
         Optional<User> user = repository.findByEmailAndPassword(email, password);
         return user.orElseThrow(() -> new LoginFailException("아이디 또는 패스워드가 잘못되었습니다."));
     }
+
+    public boolean existsUser(String userId) {
+        return repository.findById(userId).isPresent();
+    }
 }

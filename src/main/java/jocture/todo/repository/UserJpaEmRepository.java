@@ -58,4 +58,11 @@ public class UserJpaEmRepository implements UserRepository {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<User> findById(String userId) {
+        User user = em.find(User.class, userId);
+        return Optional.ofNullable(user);
+
+    }
 }
