@@ -25,6 +25,11 @@ public class SessionManager {
         Cookie sessionCookie = new Cookie(SessionConst.SESSION_ID, sessionID);
         sessionCookie.setPath("/");
         response.addCookie(sessionCookie);
+
+        // 쿠키 구분
+        // 영속 쿠키 : 만료 날짜가 있는 것 (만료날짜까지 쿠키 유지)
+        // 세선 쿠키 : 만료 날짜가 없는 것 (브라우저 종료 시까지 유지)
+
     }
 
     public Object getSession(HttpServletRequest request) {
@@ -42,7 +47,7 @@ public class SessionManager {
                 // 쿠키에서 세션 ID 조회
                 .filter(c -> c.getName().equals(SessionConst.SESSION_ID))
                 .findFirst()
-                // 세션ID 쿠리에서 세션 ID 값조회
+                // 세션ID 쿠키에서 세션 ID 값조회
                 .map(Cookie::getValue);
     }
 

@@ -1,10 +1,13 @@
 package jocture.todo.controller;
 
+import jocture.todo.controller.session.SessionConst;
+import jocture.todo.controller.session.SessionManager;
 import jocture.todo.controller.validation.marker.TodoValidationGroup;
 import jocture.todo.dto.TodoDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
+import jocture.todo.entity.User;
 import jocture.todo.exception.InvalidUserException;
 import jocture.todo.exception.RequiredAuthenticationException;
 import jocture.todo.mapper.TodoMapper;
@@ -13,11 +16,13 @@ import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +40,14 @@ public class TodoController {
     private final TodoService todoService;
     private final UserService userService;
     private final TodoMapper todoMapper;
+    private final SessionManager sessionManager;
 
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 여청바디 + 응답 바디)
 
     @Deprecated(since = "2.0")
     @GetMapping("/v1") // 사용 노노
-    public ResponseDto<List<TodoDto>> getTodoList(HttpServletRequest request) {
+    public ResponseDto<List<TodoDto>> getTodoListV1(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String userId = Arrays.stream(Optional.ofNullable(cookies).orElse(new Cookie[]{}))
                 .filter(cookie -> cookie.getName().equals("userId"))
@@ -53,7 +59,7 @@ public class TodoController {
     }
 
     @GetMapping("/v2")
-    public ResponseDto<List<TodoDto>> getTodoList(
+    public ResponseDto<List<TodoDto>> getTodoListV2(
             @CookieValue(name = "userId", required = false) String userId
     ) {
         log.debug(">>> userId : {}", userId);
@@ -61,16 +67,68 @@ public class TodoController {
         return getRealTodoList(userId);
     }
 
+    @GetMapping("/v3")
+    public ResponseDto<List<TodoDto>> getTodoListV3(
+            HttpServletRequest request
+    ) {
+        User loginUser = (User) sessionManager.getSession(request);
+        log.debug(">>>> loginUser {}", loginUser);
+        validateUser(loginUser);
+        return getRealTodoList(loginUser.getId());
+    }
+
+    @GetMapping("/v4")
+    public ResponseDto<List<TodoDto>> getTodoListV4(
+            HttpServletRequest request
+    ) {
+        HttpSession session = request.getSession();
+        User loginUser = (User) session.getAttribute(SessionConst.SESSION_USER_KEY);
+
+        log.debug(">>>> loginUser {}", loginUser);
+        validateUser(loginUser);
+        return getRealTodoList(loginUser.getId());
+    }
+
+    @GetMapping("/v5")
+    public ResponseDto<List<TodoDto>> getTodoListV5(
+            HttpSession session
+    ) {
+        User loginUser = (User) session.getAttribute(SessionConst.SESSION_USER_KEY);
+
+        log.debug(">>>> loginUser {}", loginUser);
+        validateUser(loginUser);
+        return getRealTodoList(loginUser.getId());
+    }
+
+
+    @GetMapping("/v6")
+    public ResponseDto<List<TodoDto>> getTodoListV6(
+            @SessionAttribute(name = SessionConst.SESSION_USER_KEY, required = false) User loginUser
+    ) {
+        log.debug(">>>> loginUser {}", loginUser);
+        validateUser(loginUser);
+        return getRealTodoList(loginUser.getId());
+    }
+
+    private void validateUser(User user) {
+        if (user == null) {
+            throwNoLoginException();
+        }
+        validateUser(user.getId());
+    }
+
+    private void throwNoLoginException() {
+        throw new RequiredAuthenticationException("로그인을 하셔야 합니다.");
+    }
+
     private void validateUser(String userId) {
-        if (userId == null || userId.isBlank()) {
-            throw new RequiredAuthenticationException("로그인을 하셔야 합니다.");
+        if (!StringUtils.hasText(userId)) {
+            throwNoLoginException();
         }
         if (!userService.existsUser(userId)) {
             throw new InvalidUserException("유효한 회원이 아닙니다.");
         }
-
     }
-
 
     //@CrossOrigin("*")
     @GetMapping

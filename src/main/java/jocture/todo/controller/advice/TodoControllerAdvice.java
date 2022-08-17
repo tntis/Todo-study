@@ -53,8 +53,8 @@ public class TodoControllerAdvice { //Todo
     /* @ExceptionHandler({AuthenticationProblemException.class})
      @ResponseStatus(HttpStatus.UNAUTHORIZED)*/
     @ExceptionHandler
-    public ResponseEntity<?> loginProblemExceptionHandler(AuthenticationProblemException e) { // Throwable
-        log.error("loginProblemExceptionHandler -> {} {}", e.getClass().getSimpleName(), e.getMessage());
+    public ResponseEntity<?> authenticationProblemExceptionHandler(AuthenticationProblemException e) { // Throwable
+        log.error("authenticationProblemExceptionHandler -> {} {}", e.getClass().getSimpleName(), e.getMessage());
         ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
         return ResponseDto.responseEntityof(ResponseCode.UNAUTHORIZED, responseError);
         //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
