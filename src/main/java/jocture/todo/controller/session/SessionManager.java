@@ -30,6 +30,12 @@ public class SessionManager {
         // 영속 쿠키 : 만료 날짜가 있는 것 (만료날짜까지 쿠키 유지)
         // 세선 쿠키 : 만료 날짜가 없는 것 (브라우저 종료 시까지 유지)
 
+        // HTTP 프로토콜
+        // Stateless(무상태)
+
+        // 로그인 과정에 대해 아는대로 설명해보세요
+        // Http 특송(무결정), 세션 개념, 쿠키(Request/Response) 등//
+
     }
 
     public Object getSession(HttpServletRequest request) {

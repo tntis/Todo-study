@@ -39,15 +39,16 @@ public class TodoControllerAdvice { //Todo
     @ExceptionHandler//(ApplicationException.class)
     public ResponseEntity<?> applicationExceptionHandler(ApplicationException e) { // Throwable
         log.error("public ResponseEntity<?> applicationExceptionHandler -> ", e);
-        return ResponseEntity.internalServerError().body(e.getMessage());
+        ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
+        return ResponseDto.responseEntityof(ResponseCode.INTERNAL_SERVER_ERROR, responseError);
 
     }
 
     @ExceptionHandler
     public ResponseEntity<?> globalExceptionHandler(Exception e) { // Throwable
         log.error("globalExceptionHandler -> ", e);
-        return ResponseEntity.internalServerError().body("ERROR");
-
+        ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
+        return ResponseDto.responseEntityof(ResponseCode.INTERNAL_SERVER_ERROR, responseError);
     }
 
     /* @ExceptionHandler({AuthenticationProblemException.class})

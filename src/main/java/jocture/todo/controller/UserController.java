@@ -138,7 +138,8 @@ public class UserController {
         User user = userService.login(email, password);
 
         HttpSession session = request.getSession(); // 세션 생성
-        session.setAttribute(SessionConst.SESSION_USER_KEY, user);
+        session.setAttribute(SessionConst.SESSION_USER_KEY, user); // 세션에 데이터 저장
+
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 
@@ -161,6 +162,7 @@ public class UserController {
     public ResponseDto<UserDto> logOutV3(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.invalidate();
+
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 
