@@ -139,7 +139,7 @@ public class UserController {
 
         HttpSession session = request.getSession(); // 세션 생성
         session.setAttribute(SessionConst.SESSION_USER_KEY, user); // 세션에 데이터 저장
-
+        session.setMaxInactiveInterval(5);
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 
@@ -160,8 +160,10 @@ public class UserController {
 
     @PostMapping("/logout/v3")
     public ResponseDto<UserDto> logOutV3(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.invalidate();
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
 
         return ResponseDto.of(ResponseCode.SUCCESS);
     }

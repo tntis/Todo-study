@@ -1,10 +1,11 @@
-#server:
-#  servlet:
-#        context-path: /study
-#    session:
-#      cookie:
-#        name: TODO_SESSION_ID # Default : JSESSIONID
-
+server:
+  servlet:
+    #        context-path: /study
+    session:
+      #      cookie:
+      #        name: TODO_SESSION_ID # Default : JSESSIONID
+      timeout: 1800 # 값은 초 단위 설정 (분 단위로 설정 가능 : 60, 120 ...)
+      
 #Slf4j 로깅레벨 : TRACE > DEBUG > INFO > WARN > ERROR > FATAL
 spring:
   #  profiles:
