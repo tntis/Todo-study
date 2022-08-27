@@ -1,6 +1,6 @@
 package jocture.todo.repository;
 
-import jocture.todo.entity.Todo;
+import jocture.todo.data.entity.Todo;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +15,7 @@ public interface TodoRepository {
 
     void save(Todo todo);
 
-    void delete (Todo todo);
+    void delete(Todo todo);
 
     void deleteById(Integer id);
 

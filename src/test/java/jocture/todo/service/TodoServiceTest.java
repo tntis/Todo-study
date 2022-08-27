@@ -1,6 +1,6 @@
 package jocture.todo.service;
 
-import jocture.todo.entity.Todo;
+import jocture.todo.data.entity.Todo;
 import jocture.todo.exception.ApplicationException;
 import jocture.todo.repository.TodoRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +24,8 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional // @SpringBootTest의 @Transactional의 기본설정은 Rollback
 class TodoServiceTest {
 
-    @Autowired TodoService service;
+    @Autowired
+    TodoService service;
     private static final String USER_NAME = "temp";
 
     @Autowired
@@ -40,7 +39,7 @@ class TodoServiceTest {
     void getList() {
         //Given
         int createCount = 3;
-         createTodoList(createCount);
+        createTodoList(createCount);
         System.out.println("=========================== 1");
         // When
         List<Todo> todos = service.getList(USER_NAME);
@@ -95,7 +94,7 @@ class TodoServiceTest {
         assertThatThrownBy(callable).isInstanceOf(ApplicationException.class);
         Assertions.assertThrows(ApplicationException.class, executable);
     }
-    
+
     @Test
     void update() {
         //Given
@@ -145,7 +144,6 @@ class TodoServiceTest {
     }
 
 
-
     @Test
     void delete() {
         //Given
@@ -178,13 +176,6 @@ class TodoServiceTest {
     }
 
 }
-
-
-
-
-
-
-
 
 
 // list 의 종류가 많으니

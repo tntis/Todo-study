@@ -1,6 +1,6 @@
 package jocture.todo.service;
 
-import jocture.todo.entity.Todo;
+import jocture.todo.data.entity.Todo;
 import jocture.todo.exception.ApplicationException;
 import jocture.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,12 @@ public class TodoService {
 
     private final TodoRepository repository;
 
-    public List<Todo> getList(String userId){
+    public List<Todo> getList(String userId) {
         return repository.findByUserId(userId);
     }
+
     @Transactional
-    public void create(Todo todo){
+    public void create(Todo todo) {
         validateTodo(todo);
 
         repository.save(todo);
@@ -33,32 +34,34 @@ public class TodoService {
     }
 
     private void validateTodo(Todo todo) {
-        if(todo == null){
+        if (todo == null) {
             String msg = "Todo가 null 입니다.";
             log.error(msg);
             throw new ApplicationException(msg);
         }
-        if(todo.getUserId() == null){
+        if (todo.getUserId() == null) {
             String msg2 = "Todo의 UserId가 Null 입니다";
             log.error(msg2);
             throw new ApplicationException(msg2);
         }
     }
+
     @Transactional
-    public void update(Todo newTodo){
+    public void update(Todo newTodo) {
         log.debug(">>> newTodo : {}", newTodo);
         validateTodo(newTodo);
-        Optional<Todo> oldTodo =  repository.findById(newTodo.getId());
+        Optional<Todo> oldTodo = repository.findById(newTodo.getId());
         log.debug(">>> oldTodo : {}", oldTodo);
         oldTodo.ifPresentOrElse(todo -> {
             todo.setTitle(newTodo.getTitle());
             todo.setDone(newTodo.isDone());
-           // repository.save(todo); // 없어도 무관하게 동작함
+            // repository.save(todo); // 없어도 무관하게 동작함
             log.info("Todo가 수정되었습니다.{}", todo.getId());
         }, () -> log.warn("수정할 Todo가 없습니다.{}", newTodo.getId()));
     }
+
     @Transactional
-    public void delete(Todo todo){
+    public void delete(Todo todo) {
         log.debug(">>> todo : {}", todo);
         validateTodo(todo);
 

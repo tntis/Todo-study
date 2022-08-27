@@ -1,10 +1,11 @@
 package jocture.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jocture.todo.dto.TodoDto;
-import jocture.todo.mapper.TodoMapper;
+import jocture.todo.data.dto.TodoDto;
+import jocture.todo.data.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
-import jocture.todo.type.ResponseCode;
+import jocture.todo.data.type.ResponseCode;
+import jocture.todo.web.controller.TodoController;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class TodoControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.SUCCESS.code())));
-        
+
     }
 
     @ParameterizedTest
