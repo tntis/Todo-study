@@ -26,27 +26,42 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String requestURI = request.getRequestURI();
-        log.info(">>>requestURI={}", requestURI);
 
+        String method = request.getMethod();
+        String requestURI = request.getRequestURI();
         String logId = UUID.randomUUID().toString();
         request.setAttribute(LOG_ID, logId);
-        log.info(">>> Request=[{}][{}]", logId, requestURI);
+        log.info(">>> Request=[{}][{} {}]", logId, method, requestURI);
         log.info(">>> Controller={}", handler);
-
 
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        String method = request.getMethod();
+        String requestURI = request.getRequestURI();
+        String logId = UUID.randomUUID().toString();
+        log.info(">>> postHandle =[{}][{} {}]", logId, method, requestURI);
+
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        String method = request.getMethod();
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
 
-        log.info(">>> Request=[{}][{}]", logId, requestURI);
+        log.info(">>> Response =[{}][{} {}]", logId, method, requestURI);
     }
 }
+/*
+  preHandle 실패시
+  postHandle 를 꺼꾸로 감
+    Exception 발생하면 postHandle 실행이 되지 않음
+    afterCompletion
+
+
+
+
+ * */
